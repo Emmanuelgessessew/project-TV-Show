@@ -1,150 +1,69 @@
-// JavaScript code for Level 300 implementation
-
-let allEpisodes = []; // Store episodes fetched from API
+// JavaScript code for Level 200 implementation
 
 function setup() {
-<<<<<<< HEAD
-  fetchEpisodes()
-    .then((episodes) => {
-      allEpisodes = episodes;
+  fetchEpisodes("https://api.tvmaze.com/shows")
+    .then((allShows) => {
+      if (allShows) {
+        // console.log(allShows);
+        selectShows(allShows);
+      }
+    })
+
+    .catch((error) => console.error(error));
+}
+function fetchEpisodes(url) {
+  return fetch(url)
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Fetching Problem");
+      }
+    })
+    .catch((error) => console.error(error));
+}
+function selectShows(allShows) {
+  const selectedShow = document.getElementById("select-show");
+  const showSelect = document.createElement("select");
+  showSelect.id = "showList-selector";
+
+  // Default episode path (if no show is selected)
+  let episodePath = "https://api.tvmaze.com/shows/1/episodes";
+  //first display the episodes
+  fetchEpisodes(episodePath)
+    .then((allEpisodes) => {
+      // console.log("Default episodes:", allEpisodes);
       initializeSearchAndDropdown(allEpisodes);
-      makePageForEpisodes(allEpisodes);
     })
     .catch((error) => {
-      displayError("Failed to load episodes. Please try again later.");
-      console.error("Error fetching episodes:", error);
+      console.error("Error fetching default episodes:", error);
     });
-}
 
-function fetchEpisodes() {
-  const API_URL = "https://api.tvmaze.com/shows/82/episodes";
+  allShows.map((allShow) => {
+    const option = document.createElement("option");
+    option.value = allShow.id;
+    option.textContent = allShow.name;
+    showSelect.appendChild(option);
+  });
 
-  return new Promise((resolve, reject) => {
-    displayLoading(); // Show loading message
-    fetch(API_URL)
-      .then((response) => {
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return response.json();
-      })
-      .then((data) => {
-        hideLoading(); // Remove loading message
-        resolve(data);
+  showSelect.addEventListener("change", () => {
+    const selectedOption = showSelect.options[showSelect.selectedIndex];
+    const showId = selectedOption.value;
+    const showName = selectedOption.textContent;
+
+    episodePath = `https://api.tvmaze.com/shows/${showId}/episodes`;
+
+    fetchEpisodes(episodePath)
+      .then((allEpisodes) => {
+        // console.log("Selected episodes:", allEpisodes);
+        initializeSearchAndDropdown(allEpisodes);
       })
       .catch((error) => {
-        hideLoading(); // Ensure loading is removed even on error
-        reject(error);
+        console.error("Error fetching episodes for selected show:", error);
       });
-=======
-  const allEpisodes = getAllEpisodes();
-  console.log(allEpisodes);
-  let filterInput = allEpisodes;
-
-  makeTopDisplay(allEpisodes, filterInput);
-  makePageForEpisodes(filterInput);
-}
-
-function makeTopDisplay(allEpisodes, filterInput) {
-  const topDisplayElem = document.getElementById("top-display");
-  const selectElement = document.createElement("select");
-  const inputElement = document.createElement("input");
-  //add select
-  selectElement.id = "movie-list";
-  const allOptions = document.createElement("option");
-  allOptions.value = "all";
-  allOptions.textContent = "All...";
-  selectElement.appendChild(allOptions);
-  allEpisodes.map((movie) => {
-    const option = document.createElement("option");
-    option.value = movie.name;
-    option.textContent = `${movie.name} - S${String(movie.season).padStart(
-      2,
-      "0"
-    )}E${String(movie.number).padStart(2, "0")}`;
-    selectElement.appendChild(option);
   });
-  //select function
-  selectElement.addEventListener("change", (e) => {
-    // console.log("you click event", e.target.value);
-    if (e.target.value == "all") {
-      makePageForEpisodes(allEpisodes);
-    } else {
-      filterInput = allEpisodes.filter((film) => film.name == e.target.value);
-      makePageForEpisodes(filterInput);
-      addLabel.textContent = `This is the list of Episode ${filterInput.length}/${allEpisodes.length}`;
-    }
-  });
-  //add input
-  inputElement.type = "text";
-  inputElement.placeholder = "Search It What you Like";
-  //add label
-  const addLabel = document.createElement("label");
-  addLabel.textContent = `This is the list of Episode ${filterInput.length}/${allEpisodes.length}`;
-  //input event listener
-  inputElement.addEventListener("input", () => {
-    const searchName = inputElement.value.toLocaleLowerCase();
-    filterInput = filterEpisodes(allEpisodes, searchName);
-    // console.log(filterInput);
-    addLabel.textContent = `This is the list of Episode ${filterInput.length}/${allEpisodes.length}`;
 
-    makePageForEpisodes(filterInput);
-  });
-  topDisplayElem.appendChild(selectElement);
-  topDisplayElem.appendChild(inputElement);
-  topDisplayElem.appendChild(addLabel);
-}
-//this is function for name and summary filter
-function filterEpisodes(allEpisodes, searchName) {
-  if (searchName) {
-    filterInput = allEpisodes.filter(
-      (film) =>
-        film.name.toLocaleLowerCase().includes(searchName) ||
-        film.summary.toLocaleLowerCase().includes(searchName)
-    );
-    return filterInput;
-  } else {
-    return allEpisodes;
-  }
-}
-function makePageForEpisodes(episodeList) {
-  const rootElem = document.getElementById("root");
-  rootElem.innerHTML = ""; // Clear root element
-
-  episodeList.forEach((episode) => {
-    // Create episode container
-    const episodeCard = document.createElement("div");
-    episodeCard.classList.add("episode-card");
-
-    // Episode title
-    const title = document.createElement("h2");
-    title.textContent = `${episode.name} - S${String(episode.season).padStart(
-      2,
-      "0"
-    )}E${String(episode.number).padStart(2, "0")}`;
-    episodeCard.appendChild(title);
-
-    // Episode image
-    if (episode.image && episode.image.medium) {
-      const img = document.createElement("img");
-      img.src = episode.image.medium;
-      img.alt = episode.name;
-      episodeCard.appendChild(img);
-    }
-
-    // Episode summary
-    const summary = document.createElement("p");
-    summary.innerHTML = episode.summary || "No summary available.";
-    episodeCard.appendChild(summary);
-
-    // Episode link to TVmaze
-    const link = document.createElement("a");
-    link.href = episode.url;
-    link.target = "_blank";
-    link.textContent = "More info on TVmaze";
-    episodeCard.appendChild(link);
-
-    rootElem.appendChild(episodeCard);
->>>>>>> 076e6431fbbe319e9e380eda2afe98b9977bf770
-  });
+  selectedShow.append(showSelect);
 }
 
 function makePageForEpisodes(episodeList) {
@@ -161,7 +80,7 @@ function makePageForEpisodes(episodeList) {
     title.textContent = `${episode.name} - S${formattedSeason}E${formattedNumber}`;
 
     const img = document.createElement("img");
-    img.src = episode.image ? episode.image.medium : "placeholder.jpg"; // Handle missing images
+    img.src = episode.image.medium;
     img.alt = `${episode.name} - S${formattedSeason}E${formattedNumber}`;
 
     const refButton = document.createElement("button");
@@ -182,12 +101,21 @@ function makePageForEpisodes(episodeList) {
 
 function initializeSearchAndDropdown(allEpisodes) {
   const rootElem = document.getElementById("root");
-
+  //default show all
+  makePageForEpisodes(allEpisodes);
+  const existingControls = document.getElementById("controls");
+  if (existingControls) {
+    existingControls.innerHTML = "";
+  }
   // Create search bar
   const searchInput = document.createElement("input");
   searchInput.type = "text";
   searchInput.placeholder = "Search episodes...";
   searchInput.id = "search-bar";
+
+  //make it episode label
+  const selectLabel = document.createElement("label");
+  selectLabel.setAttribute("for", "episode-label");
 
   // Create dropdown
   const episodeSelect = document.createElement("select");
@@ -222,51 +150,33 @@ function initializeSearchAndDropdown(allEpisodes) {
     const selectedValue = episodeSelect.value;
     if (selectedValue === "") {
       makePageForEpisodes(allEpisodes);
+      updateEpisodeCount(allEpisodes.length, allEpisodes.length);
     } else {
-      const selectedEpisode = allEpisodes.filter((episode) => episode.name === selectedValue);
+      const selectedEpisode = allEpisodes.filter(
+        (episode) => episode.name === selectedValue
+      );
       makePageForEpisodes(selectedEpisode);
+      updateEpisodeCount(selectedEpisode.length, allEpisodes.length);
     }
   });
 
   // Add elements to DOM
   const controlsDiv = document.createElement("div");
   controlsDiv.id = "controls";
-  controlsDiv.append(searchInput, episodeSelect);
+  // controlsDiv.appendChild(selectLabel);
+  controlsDiv.append(searchInput, selectLabel, episodeSelect);
   rootElem.prepend(controlsDiv);
 
   // Episode count display
   const episodeCount = document.createElement("p");
   episodeCount.id = "episode-count";
-  rootElem.append(episodeCount);
+  controlsDiv.append(episodeCount);
   updateEpisodeCount(allEpisodes.length, allEpisodes.length);
 }
 
 function updateEpisodeCount(filtered, total) {
   const episodeCount = document.getElementById("episode-count");
   episodeCount.textContent = `Displaying ${filtered} / ${total} episodes.`;
-}
-
-// Utility functions
-function displayLoading() {
-  const rootElem = document.getElementById("root");
-  const loadingMessage = document.createElement("p");
-  loadingMessage.id = "loading-message";
-  loadingMessage.textContent = "Loading episodes, please wait...";
-  rootElem.appendChild(loadingMessage);
-}
-
-function hideLoading() {
-  const loadingMessage = document.getElementById("loading-message");
-  if (loadingMessage) loadingMessage.remove();
-}
-
-function displayError(message) {
-  const rootElem = document.getElementById("root");
-  const errorMessage = document.createElement("p");
-  errorMessage.id = "error-message";
-  errorMessage.textContent = message;
-  errorMessage.style.color = "red";
-  rootElem.appendChild(errorMessage);
 }
 
 window.onload = setup;

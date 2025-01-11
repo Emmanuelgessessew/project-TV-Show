@@ -1,70 +1,93 @@
 body {
-  background-color: #f0f0f0;
-  font-family: Arial, sans-serif;
-  color: #333;
-  margin: 0;
-  padding: 0;
-}
-
-#top-display {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  /* background-color: red; */
-  padding: 20px;
-  margin: 20px;
-  gap: 20px;
-}
-#top-display input,
-#top-display select {
-  padding: 10px;
+  background-color: #999;
 }
 #root {
+  background-color: red;
+  display: flex;
+  flex-direction: row;
+  /* justify-content: space-around; */
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+main {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
+  gap: 10px;
+
+  max-width: 80vw;
+  margin: 0 auto;
+}
+#controls {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+#showList-selector {
   padding: 20px;
 }
-
-.episode-card {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  width: 250px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  text-align: center;
-  padding: 10px;
-}
-
-.episode-card img {
+/* #controls {
+  background-color: red;
   width: 100%;
-  height: auto;
+}
+#controls p {
+  background-color: #fff;
+  color: #111;
+  padding: 10px;
   border-radius: 5px;
 }
-
-.episode-card h2 {
-  font-size: 1.1em;
-  color: #333;
-  margin: 10px 0;
+#controls p:hover {
+  background-color: #111;
+  color: #fff;
+  transform: scale(1.1);
+} */
+.episode {
+  background-color: #fff;
+  width: calc(33.33% - 10px);
+  border-radius: 5px;
+  align-items: center;
+}
+.episode:hover {
+  transform: scale(0.8);
+}
+.episode h2 {
+  padding: 20px;
+  border: 2px solid #111;
+  border-radius: 5px;
+  font-size: 1rem;
+  text-align: center;
+  display: block;
+  margin: 0 auto;
+  width: calc(100%-20px);
+}
+.episode img {
+  width: 80%;
+  display: block;
+  margin: 0 auto;
+  padding: 20px;
+}
+.episode p {
+  padding: 0 10px;
+}
+.episode button {
+  display: block;
+  padding: 10px;
+  cursor: pointer;
+  margin: 0 auto;
+}
+.episode button:hover {
+  background-color: #111;
+  color: #fff;
 }
 
-.episode-card p {
-  font-size: 0.9em;
-  color: #666;
-  margin: 10px 0;
-}
-
-.episode-card a {
-  display: inline-block;
-  margin-top: 10px;
-  font-size: 0.9em;
-  color: #007bff;
-  text-decoration: none;
-}
-
-.episode-card a:hover {
-  text-decoration: underline;
-  color: #0056b3;
+@media (max-width: 768px) {
+  main {
+    display: flex;
+    flex-direction: column;
+  }
+  .episode {
+    width: 100%;
+    transform: scale(1);
+  }
 }
