@@ -238,6 +238,7 @@ function initializeSearchAndDropdown(allEpisodes) {
     makePageForEpisodes(filteredEpisodes);
     updateEpisodeCount(filteredEpisodes.length, allEpisodes.length);
   });
+  
 
   episodeSelect.addEventListener("change", () => {
     const selectedValue = episodeSelect.value;
